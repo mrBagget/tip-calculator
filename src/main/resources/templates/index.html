@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор чаевых</title>
+    <title>Калькулятор чаевых - Улучшенная версия</title>
     <style>
         * {
             margin: 0;
@@ -26,7 +26,7 @@
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             padding: 40px;
-            max-width: 450px;
+            max-width: 500px;
             width: 100%;
             text-align: center;
         }
@@ -41,6 +41,15 @@
         .form-group {
             margin-bottom: 25px;
             text-align: left;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
         }
 
         label {
@@ -87,6 +96,47 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .service-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .service-btn {
+            padding: 10px;
+            border: 2px solid #e1e1e1;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .service-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .service-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
         .calculate-btn {
             width: 100%;
             padding: 18px;
@@ -126,19 +176,42 @@
             }
         }
 
+        .result-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .result-section h3 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
         .result-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 1.1em;
         }
 
-        .result-row:last-child {
-            margin-bottom: 0;
+        .result-row.total {
             font-size: 1.3em;
             font-weight: bold;
             border-top: 2px solid rgba(255, 255, 255, 0.3);
             padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .per-person {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
             margin-top: 15px;
         }
 
@@ -151,6 +224,21 @@
             font-weight: 500;
         }
 
+        .history-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .history-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 30px 20px;
@@ -159,12 +247,21 @@
             h1 {
                 font-size: 2em;
             }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .service-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>💰 Калькулятор чаевых</h1>
+    <h1>💰 Калькулятор чаевых Pro</h1>
 
     <form th:action="@{/calculate}" method="post" th:object="${tipRequest}">
         <div class="form-group">
@@ -181,14 +278,48 @@
             </div>
         </div>
 
+        <div class="form-row">
+            <div class="form-group">
+                <label for="tipPercentage">Процент чаевых:</label>
+                <select th:field="*{tipPercentage}" id="tipPercentage" required>
+                    <option value="">Выберите процент</option>
+                    <option th:value="5" th:text="'5%'">5%</option>
+                    <option th:value="10" th:text="'10%'">10%</option>
+                    <option th:value="15" th:text="'15%'">15%</option>
+                    <option th:value="18" th:text="'18%'">18%</option>
+                    <option th:value="20" th:text="'20%'">20%</option>
+                    <option th:value="25" th:text="'25%'">25%</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="numberOfPeople">Количество людей:</label>
+                <input type="number"
+                       th:field="*{numberOfPeople}"
+                       id="numberOfPeople"
+                       value="1"
+                       min="1"
+                       max="50">
+            </div>
+        </div>
+
         <div class="form-group">
-            <label for="tipPercentage">Процент чаевых:</label>
-            <select th:field="*{tipPercentage}" id="tipPercentage" required>
-                <option value="">Выберите процент</option>
-                <option th:value="10" th:text="'10%'">10%</option>
-                <option th:value="15" th:text="'15%'">15%</option>
-                <option th:value="20" th:text="'20%'">20%</option>
-            </select>
+            <label>Тип заведения (автовыбор %):</label>
+            <div class="service-buttons">
+                <button type="button" class="service-btn" onclick="setTipByService('restaurant', 15)">Ресторан</button>
+                <button type="button" class="service-btn" onclick="setTipByService('cafe', 10)">Кафе</button>
+                <button type="button" class="service-btn" onclick="setTipByService('bar', 18)">Бар</button>
+                <button type="button" class="service-btn" onclick="setTipByService('delivery', 10)">Доставка</button>
+                <button type="button" class="service-btn" onclick="setTipByService('taxi', 15)">Такси</button>
+                <button type="button" class="service-btn" onclick="setTipByService('hotel', 20)">Отель</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input type="checkbox" th:field="*{roundUp}" id="roundUp">
+                <label for="roundUp">Округлить вверх до удобной суммы</label>
+            </div>
         </div>
 
         <button type="submit" class="calculate-btn">
@@ -198,23 +329,95 @@
 
     <!-- Результаты расчета -->
     <div th:if="${result}" class="result">
-        <div class="result-row">
-            <span>Сумма счёта:</span>
-            <span th:text="'₽' + ${#numbers.formatDecimal(result.billAmount, 1, 2)}">₽0.00</span>
+        <div class="result-section">
+            <h3>Общий расчет</h3>
+            <div class="result-row">
+                <span>Сумма счёта:</span>
+                <span th:text="'₽' + ${#numbers.formatDecimal(result.billAmount, 1, 2)}">₽0.00</span>
+            </div>
+            <div class="result-row">
+                <span th:text="'Чаевые (' + ${result.tipPercentage} + '%):'">Чаевые (0%):</span>
+                <span th:text="'₽' + ${#numbers.formatDecimal(result.tipAmount, 1, 2)}">₽0.00</span>
+            </div>
+            <div class="result-row total">
+                <span>Итого к оплате:</span>
+                <span th:text="'₽' + ${#numbers.formatDecimal(result.totalAmount, 1, 2)}">₽0.00</span>
+            </div>
         </div>
-        <div class="result-row">
-            <span th:text="'Чаевые (' + ${result.tipPercentage} + '%):'">Чаевые (0%):</span>
-            <span th:text="'₽' + ${#numbers.formatDecimal(result.tipAmount, 1, 2)}">₽0.00</span>
+
+        <div th:if="${result.numberOfPeople > 1}" class="per-person">
+            <h3>На одного человека:</h3>
+            <div class="result-row">
+                <span>К доплате:</span>
+                <span th:text="'₽' + ${#numbers.formatDecimal(result.amountPerPerson, 1, 2)}">₽0.00</span>
+            </div>
+            <div class="result-row">
+                <span>Чаевые:</span>
+                <span th:text="'₽' + ${#numbers.formatDecimal(result.tipPerPerson, 1, 2)}">₽0.00</span>
+            </div>
+            <div class="result-row" th:if="${result.numberOfPeople > 1}">
+                <span>Людей:</span>
+                <span th:text="${result.numberOfPeople}">1</span>
+            </div>
         </div>
-        <div class="result-row">
-            <span>Итого к оплате:</span>
-            <span th:text="'₽' + ${#numbers.formatDecimal(result.totalAmount, 1, 2)}">₽0.00</span>
+
+        <div th:if="${result.wasRoundedUp}" style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
+            💡 Сумма была округлена вверх для удобства
         </div>
+
+        <button type="button" class="history-btn" onclick="saveToHistory()">
+            📊 Сохранить в историю
+        </button>
     </div>
 
     <div th:if="${error != null}" class="error" th:text="${error}">
         Ошибка
     </div>
 </div>
+
+<script>
+    let currentActiveBtn = null;
+
+    function setTipByService(service, percentage) {
+        // Убираем активный класс у всех кнопок
+        document.querySelectorAll('.service-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Добавляем активный класс текущей кнопке
+        event.target.classList.add('active');
+        currentActiveBtn = event.target;
+
+        // Устанавливаем процент
+        document.getElementById('tipPercentage').value = percentage;
+    }
+
+    function saveToHistory() {
+        const result = {
+            date: new Date().toLocaleString('ru-RU'),
+            billAmount: parseFloat(document.querySelector('[th\\:text*="billAmount"]')?.textContent?.replace('₽', '') || 0),
+            tipAmount: parseFloat(document.querySelector('[th\\:text*="tipAmount"]')?.textContent?.replace('₽', '') || 0),
+            totalAmount: parseFloat(document.querySelector('[th\\:text*="totalAmount"]')?.textContent?.replace('₽', '') || 0)
+        };
+
+        let history = JSON.parse(localStorage.getItem('tipHistory') || '[]');
+        history.unshift(result);
+
+        // Оставляем только последние 10 записей
+        if (history.length > 10) {
+            history = history.slice(0, 10);
+        }
+
+        localStorage.setItem('tipHistory', JSON.stringify(history));
+
+        alert('💾 Расчет сохранен в историю!');
+    }
+
+    // Автоматическое обновление при изменении количества людей
+    document.getElementById('numberOfPeople').addEventListener('input', function() {
+        if (this.value < 1) this.value = 1;
+        if (this.value > 50) this.value = 50;
+    });
+</script>
 </body>
 </html>
