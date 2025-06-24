@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор чаевых</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 15px 15px 15px 40px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        select {
+            padding-left: 15px;
+            cursor: pointer;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.3em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            color: white;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .result-row:last-child {
+            margin-bottom: 0;
+            font-size: 1.3em;
+            font-weight: bold;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>💰 Калькулятор чаевых</h1>
+
+    <form th:action="@{/calculate}" method="post" th:object="${tipRequest}">
+        <div class="form-group">
+            <label for="billAmount">Сумма счёта:</label>
+            <div class="input-group">
+                <span class="currency-symbol">₽</span>
+                <input type="number"
+                       th:field="*{billAmount}"
+                       id="billAmount"
+                       placeholder="0.00"
+                       step="0.01"
+                       min="0"
+                       required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="tipPercentage">Процент чаевых:</label>
+            <select th:field="*{tipPercentage}" id="tipPercentage" required>
+                <option value="">Выберите процент</option>
+                <option th:value="10" th:text="'10%'">10%</option>
+                <option th:value="15" th:text="'15%'">15%</option>
+                <option th:value="20" th:text="'20%'">20%</option>
+            </select>
+        </div>
+
+        <button type="submit" class="calculate-btn">
+            Рассчитать чаевые
+        </button>
+    </form>
+
+    <!-- Результаты расчета -->
+    <div th:if="${result}" class="result">
+        <div class="result-row">
+            <span>Сумма счёта:</span>
+            <span th:text="'₽' + ${#numbers.formatDecimal(result.billAmount, 1, 2)}">₽0.00</span>
+        </div>
+        <div class="result-row">
+            <span th:text="'Чаевые (' + ${result.tipPercentage} + '%):'">Чаевые (0%):</span>
+            <span th:text="'₽' + ${#numbers.formatDecimal(result.tipAmount, 1, 2)}">₽0.00</span>
+        </div>
+        <div class="result-row">
+            <span>Итого к оплате:</span>
+            <span th:text="'₽' + ${#numbers.formatDecimal(result.totalAmount, 1, 2)}">₽0.00</span>
+        </div>
+    </div>
+
+    <div th:if="${error != null}" class="error" th:text="${error}">
+        Ошибка
+    </div>
+</div>
+</body>
+</html>
