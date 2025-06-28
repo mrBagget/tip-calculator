@@ -563,6 +563,201 @@
                 grid-template-columns: 1fr;
             }
         }
+        /* Компактное поле количества людей */
+        .people-counter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f9fa;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            padding: 8px 12px;
+            max-width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .people-counter:focus-within {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .people-counter button {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 1.2em;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .people-counter button:hover {
+            background: #5a67d8;
+            transform: scale(1.1);
+        }
+
+        .people-counter button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .people-counter input {
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            width: 40px;
+            padding: 0;
+        }
+
+        .people-counter input:focus {
+            outline: none;
+        }
+
+        .people-counter .people-icon {
+            font-size: 1.2em;
+            color: #667eea;
+        }
+
+        /* Стили для страниц оплаты */
+        .payment-page {
+            display: none;
+            text-align: center;
+        }
+
+        .payment-page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .payment-method {
+            padding: 20px;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .payment-method:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .payment-method.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .payment-method-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .waiter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .waiter-card {
+            padding: 20px;
+            border: 2px solid #e1e1e1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+        }
+
+        .waiter-card:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateY(-2px);
+        }
+
+        .waiter-card.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .waiter-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin: 0 auto 10px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .tip-quick-select {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .tip-quick-btn {
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tip-quick-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .tip-quick-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -598,8 +793,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="numberOfPeople">Количество людей:</label>
-                    <input type="number" id="numberOfPeople" value="1" min="1" max="50">
+                    <label for="numberOfPeople">👥 Количество людей:</label>
+                    <div class="people-counter">
+                        <button type="button" onclick="changePeopleCount(-1)" id="decreasePeople">−</button>
+                        <input type="number" id="numberOfPeople" value="1" min="1" max="50" readonly>
+                        <button type="button" onclick="changePeopleCount(1)" id="increasePeople">+</button>
+                    </div>
                 </div>
             </div>
 
@@ -626,7 +825,71 @@
         <div id="billResult" style="display: none;"></div>
     </div>
 
+    <div id="payment-bill-page" class="payment-page">
+        <h2>💳 Оплата счета</h2>
+        <div id="payment-bill-summary"></div>
 
+        <h3>Выберите способ оплаты:</h3>
+        <div class="payment-methods">
+            <div class="payment-method" onclick="selectPaymentMethod('card')">
+                <div class="payment-method-icon">💳</div>
+                <div>Банковская карта</div>
+            </div>
+            <div class="payment-method" onclick="selectPaymentMethod('cash')">
+                <div class="payment-method-icon">💵</div>
+                <div>Наличные</div>
+            </div>
+            <div class="payment-method" onclick="selectPaymentMethod('phone')">
+                <div class="payment-method-icon">📱</div>
+                <div>По QR-коду</div>
+            </div>
+        </div>
+
+        <button class="calculate-btn" onclick="processBillPayment()" disabled id="payBillBtn">
+            Оплатить счет
+        </button>
+        <button class="back-btn" onclick="backToCalculator()">Назад</button>
+    </div>
+
+    <div id="waiter-selection-page" class="payment-page">
+        <h2>👨‍🍳 Выберите официанта</h2>
+        <p>Кто вас обслуживал?</p>
+
+        <div class="waiter-grid" id="waiterGrid">
+            <!-- Официанты будут добавлены через JavaScript -->
+        </div>
+
+        <button class="calculate-btn" onclick="selectWaiter()" disabled id="selectWaiterBtn">
+            Продолжить
+        </button>
+        <button class="back-btn" onclick="backToBillPayment()">Назад</button>
+    </div>
+
+    <div id="tip-payment-page" class="payment-page">
+        <h2>💰 Чаевые для официанта</h2>
+        <div id="tip-payment-summary"></div>
+
+        <h3>Быстрый выбор:</h3>
+        <div class="tip-quick-select">
+            <button class="tip-quick-btn" onclick="selectQuickTip(10)">10%</button>
+            <button class="tip-quick-btn" onclick="selectQuickTip(15)">15%</button>
+            <button class="tip-quick-btn" onclick="selectQuickTip(20)">20%</button>
+            <button class="tip-quick-btn" onclick="selectQuickTip(0)">Без чаевых</button>
+        </div>
+
+        <div class="form-group">
+            <label for="customTipAmount">Или введите сумму:</label>
+            <div class="input-group">
+                <span class="currency-symbol">₽</span>
+                <input type="number" id="customTipAmount" placeholder="0.00" step="0.01" min="0">
+            </div>
+        </div>
+
+        <button class="calculate-btn" onclick="processTipPayment()" id="payTipBtn">
+            Оплатить чаевые
+        </button>
+        <button class="back-btn" onclick="backToWaiterSelection()">Назад</button>
+    </div>
 
     <!-- Раздел: История -->
     <div id="history-section" class="section">
@@ -725,46 +988,235 @@
         const resultDiv = document.getElementById('billResult');
 
         resultDiv.innerHTML = `
-            <div class="result">
+        <div class="result">
+            <div class="result-section">
+                <h3>Общий расчет</h3>
+                <div class="result-row">
+                    <span>Сумма счёта:</span>
+                    <span>₽${result.billAmount.toFixed(2)}</span>
+                </div>
+                <div class="result-row">
+                    <span>Чаевые (${result.tipPercentage}%):</span>
+                    <span>₽${result.tipAmount.toFixed(2)}</span>
+                </div>
+                <div class="result-row total">
+                    <span>Итого к оплате:</span>
+                    <span>₽${result.totalAmount.toFixed(2)}</span>
+                </div>
+            </div>
+            ${result.numberOfPeople > 1 ? `
                 <div class="result-section">
-                    <h3>Общий расчет</h3>
+                    <h3>На одного человека:</h3>
                     <div class="result-row">
-                        <span>Сумма счёта:</span>
-                        <span>₽${result.billAmount.toFixed(2)}</span>
+                        <span>К доплате:</span>
+                        <span>₽${result.amountPerPerson.toFixed(2)}</span>
                     </div>
                     <div class="result-row">
-                        <span>Чаевые (${result.tipPercentage}%):</span>
-                        <span>₽${result.tipAmount.toFixed(2)}</span>
+                        <span>Чаевые:</span>
+                        <span>₽${result.tipPerPerson.toFixed(2)}</span>
                     </div>
-                    <div class="result-row total">
-                        <span>Итого к оплате:</span>
-                        <span>₽${result.totalAmount.toFixed(2)}</span>
+                    <div class="result-row">
+                        <span>Людей:</span>
+                        <span>${result.numberOfPeople}</span>
                     </div>
                 </div>
-
-                ${result.numberOfPeople > 1 ? `
-                    <div class="result-section">
-                        <h3>На одного человека:</h3>
-                        <div class="result-row">
-                            <span>К доплате:</span>
-                            <span>₽${result.amountPerPerson.toFixed(2)}</span>
-                        </div>
-                        <div class="result-row">
-                            <span>Чаевые:</span>
-                            <span>₽${result.tipPerPerson.toFixed(2)}</span>
-                        </div>
-                        <div class="result-row">
-                            <span>Людей:</span>
-                            <span>${result.numberOfPeople}</span>
-                        </div>
-                    </div>
-                ` : ''}
-
-
+            ` : ''}
+            <div style="margin-top: 20px;">
+                <button class="calculate-btn" onclick="startPaymentProcess()">
+                    💳 Оплатить
+                </button>
             </div>
-        `;
+        </div>
+    `;
 
         resultDiv.style.display = 'block';
+
+        // Сохранить данные для процесса оплаты
+        window.currentBill = result;
+    }
+
+    // Добавить новые функции для процесса оплаты
+    let selectedPaymentMethod = null;
+    let selectedWaiter = null;
+
+    function startPaymentProcess() {
+        showPaymentPage('payment-bill');
+        updateBillPaymentSummary();
+    }
+
+    function showPaymentPage(pageId) {
+        // Скрыть секцию калькулятора
+        document.getElementById('bill-section').classList.remove('active');
+
+        // Скрыть все страницы оплаты
+        document.querySelectorAll('.payment-page').forEach(page => {
+            page.classList.remove('active');
+        });
+
+        // Показать нужную страницу
+        document.getElementById(pageId + '-page').classList.add('active');
+    }
+
+    function updateBillPaymentSummary() {
+        const summary = document.getElementById('payment-bill-summary');
+        const bill = window.currentBill;
+
+        summary.innerHTML = `
+        <div class="result" style="margin-bottom: 20px;">
+            <div class="result-row">
+                <span>Сумма счёта:</span>
+                <span>₽${bill.billAmount.toFixed(2)}</span>
+            </div>
+            <div class="result-row total">
+                <span>К оплате:</span>
+                <span>₽${bill.billAmount.toFixed(2)}</span>
+            </div>
+        </div>
+    `;
+    }
+
+    function selectPaymentMethod(method) {
+        selectedPaymentMethod = method;
+
+        // Обновить визуальное состояние
+        document.querySelectorAll('.payment-method').forEach(el => {
+            el.classList.remove('selected');
+        });
+        event.target.closest('.payment-method').classList.add('selected');
+
+        // Активировать кнопку
+        document.getElementById('payBillBtn').disabled = false;
+    }
+
+    function processBillPayment() {
+        if (!selectedPaymentMethod) return;
+
+        // Имитация процесса оплаты
+        showNotification('Обработка платежа...');
+
+        setTimeout(() => {
+            showNotification('Счет оплачен успешно! ✅');
+            generateWaiters();
+            showPaymentPage('waiter-selection');
+        }, 2000);
+    }
+
+    function generateWaiters() {
+        const waiters = [
+            { id: 1, name: 'Анна', avatar: '👩' },
+            { id: 2, name: 'Дмитрий', avatar: '👨' },
+            { id: 3, name: 'Елена', avatar: '👩‍🦰' },
+            { id: 4, name: 'Михаил', avatar: '👨‍🦱' },
+            { id: 5, name: 'Ольга', avatar: '👩‍🦳' },
+            { id: 6, name: 'Александр', avatar: '👨‍🦲' }
+        ];
+
+        const waiterGrid = document.getElementById('waiterGrid');
+        waiterGrid.innerHTML = waiters.map(waiter => `
+        <div class="waiter-card" onclick="selectWaiterCard(${waiter.id}, '${waiter.name}')">
+            <div class="waiter-avatar">${waiter.avatar}</div>
+            <div>${waiter.name}</div>
+        </div>
+    `).join('');
+    }
+
+    function selectWaiterCard(id, name) {
+        selectedWaiter = { id, name };
+
+        // Обновить визуальное состояние
+        document.querySelectorAll('.waiter-card').forEach(el => {
+            el.classList.remove('selected');
+        });
+        event.target.closest('.waiter-card').classList.add('selected');
+
+        // Активировать кнопку
+        document.getElementById('selectWaiterBtn').disabled = false;
+    }
+
+    function selectWaiter() {
+        if (!selectedWaiter) return;
+
+        updateTipPaymentSummary();
+        showPaymentPage('tip-payment');
+    }
+
+    function updateTipPaymentSummary() {
+        const summary = document.getElementById('tip-payment-summary');
+        const bill = window.currentBill;
+
+        summary.innerHTML = `
+        <div class="result" style="margin-bottom: 20px;">
+            <p><strong>Официант:</strong> ${selectedWaiter.name}</p>
+            <div class="result-row">
+                <span>Сумма счёта:</span>
+                <span>₽${bill.billAmount.toFixed(2)}</span>
+            </div>
+            <div class="result-row">
+                <span>Рекомендуемые чаевые (${bill.tipPercentage}%):</span>
+                <span>₽${bill.tipAmount.toFixed(2)}</span>
+            </div>
+        </div>
+    `;
+    }
+
+    function selectQuickTip(percentage) {
+        const bill = window.currentBill;
+        const tipAmount = (bill.billAmount * percentage) / 100;
+
+        // Обновить поле суммы
+        document.getElementById('customTipAmount').value = tipAmount.toFixed(2);
+
+        // Обновить визуальное состояние
+        document.querySelectorAll('.tip-quick-btn').forEach(el => {
+            el.classList.remove('selected');
+        });
+        event.target.classList.add('selected');
+    }
+
+    function processTipPayment() {
+        const tipAmount = parseFloat(document.getElementById('customTipAmount').value) || 0;
+
+        showNotification('Обработка чаевых...');
+
+        setTimeout(() => {
+            showNotification(`Чаевые ${tipAmount.toFixed(2)}₽ переданы ${selectedWaiter.name}! 🎉`);
+
+            // Сохранить в историю полную информацию
+            const fullResult = {
+                ...window.currentBill,
+                waiter: selectedWaiter.name,
+                paidTip: tipAmount,
+                paymentMethod: selectedPaymentMethod
+            };
+
+            saveToHistory(fullResult);
+
+            // Вернуться к калькулятору
+            setTimeout(() => {
+                backToCalculator();
+                resetForm();
+            }, 2000);
+        }, 2000);
+    }
+
+    // Функции навигации назад
+    function backToCalculator() {
+        document.querySelectorAll('.payment-page').forEach(page => {
+            page.classList.remove('active');
+        });
+        document.getElementById('bill-section').classList.add('active');
+
+        // Сброс состояния
+        selectedPaymentMethod = null;
+        selectedWaiter = null;
+    }
+
+    function backToBillPayment() {
+        showPaymentPage('payment-bill');
+    }
+
+    function backToWaiterSelection() {
+        showPaymentPage('waiter-selection');
     }
 
     // Установка режима разделения
@@ -1260,6 +1712,27 @@
         const resultDiv = document.getElementById('billResult');
         addActionButtons(resultDiv);
     };
+    // Функция изменения количества людей
+    function changePeopleCount(change) {
+        const input = document.getElementById('numberOfPeople');
+        let currentValue = parseInt(input.value);
+        let newValue = currentValue + change;
+
+        // Ограничения
+        if (newValue < 1) newValue = 1;
+        if (newValue > 50) newValue = 50;
+
+        input.value = newValue;
+
+        // Обновить состояние кнопок
+        document.getElementById('decreasePeople').disabled = newValue <= 1;
+        document.getElementById('increasePeople').disabled = newValue >= 50;
+    }
+
+    // Инициализация состояния кнопок при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        changePeopleCount(0); // Обновить состояние кнопок
+    });
 </script>
 </body>
 </html>
