@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калькулятор чаевых - Улучшенная версия</title>
+    <title>Калькулятор чаевых Pro - Многофункциональный</title>
     <style>
         * {
             margin: 0;
@@ -12,32 +12,203 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.03"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            box-shadow:
+                    0 32px 64px rgba(0, 0, 0, 0.15),
+                    0 16px 32px rgba(0, 0, 0, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            padding: 48px;
+            max-width: 640px;
             width: 100%;
             text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                    0 40px 80px rgba(0, 0, 0, 0.2),
+                    0 20px 40px rgba(0, 0, 0, 0.15),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            font-weight: 300;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 40px;
+            font-size: 3.2em;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: titleGlow 3s ease-in-out infinite alternate;
         }
 
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #f093fb);
+            border-radius: 2px;
+            animation: underlineGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: brightness(1) saturate(1); }
+            100% { filter: brightness(1.1) saturate(1.2); }
+        }
+
+        @keyframes underlineGlow {
+            0% {
+                box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+                width: 60px;
+            }
+            100% {
+                box-shadow: 0 0 20px rgba(240, 147, 251, 0.6);
+                width: 80px;
+            }
+        }
+
+        /* Навигация между разделами */
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            margin-bottom: 40px;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 16px 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: rgba(102, 126, 234, 0.7);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .nav-tab:hover {
+            color: white;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-tab:hover::before {
+            opacity: 0.8;
+        }
+
+        .nav-tab.active {
+            color: white;
+            transform: translateY(-1px);
+            box-shadow:
+                    0 12px 30px rgba(102, 126, 234, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab.active::before {
+            opacity: 1;
+        }
+
+        .nav-tab.active::after {
+            content: '✨';
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            font-size: 0.8em;
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
+            50% { opacity: 1; transform: translateY(-50%) scale(1.2); }
+        }
+
+        /* Секции контента */
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Формы и элементы управления */
         .form-group {
             margin-bottom: 25px;
             text-align: left;
@@ -124,20 +295,39 @@
             color: white;
         }
 
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
 
-        input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+
+        .tip-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #28a745 0%, #ffc107 50%, #dc3545 100%);
+            outline: none;
+            margin: 10px 0;
             cursor: pointer;
         }
 
-        .calculate-btn {
+        .tip-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .tip-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .calculate-btn, .action-btn {
             width: 100%;
             padding: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -151,7 +341,7 @@
             margin-top: 20px;
         }
 
-        .calculate-btn:hover {
+        .calculate-btn:hover, .action-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
         }
@@ -208,35 +398,142 @@
             margin-top: 15px;
         }
 
-        .per-person {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-
-        .error {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
+        /* История */
+        .history-list {
+            max-height: 400px;
+            overflow-y: auto;
             margin-top: 20px;
-            font-weight: 500;
         }
 
-        .history-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
+        .history-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
             transition: all 0.3s ease;
         }
 
-        .history-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
+        .history-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .history-date {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .history-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-amounts {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9em;
+        }
+
+        .history-total {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #667eea;
+        }
+
+        .delete-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ee5a24;
+        }
+
+        .empty-history {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin-top: 30px;
+        }
+
+        /* Разделение счета */
+        .split-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .split-btn {
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .split-btn:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .split-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .person-input {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .person-input input {
+            margin-bottom: 10px;
+        }
+
+        .add-person-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .add-person-btn:hover {
+            background: #218838;
+        }
+
+        .remove-person-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8em;
+            float: right;
+        }
+
+        .remove-person-btn:hover {
+            background: #c82333;
         }
 
         @media (max-width: 480px) {
@@ -248,6 +545,11 @@
                 font-size: 2em;
             }
 
+            .nav-tabs {
+                flex-direction: column;
+                gap: 5px;
+            }
+
             .form-row {
                 flex-direction: column;
                 gap: 0;
@@ -256,6 +558,10 @@
             .service-buttons {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .split-options {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -263,154 +569,372 @@
 <div class="container">
     <h1>💰 Калькулятор чаевых Pro</h1>
 
-    <form th:action="@{/calculate}" method="post" th:object="${tipRequest}">
-        <div class="form-group">
-            <label for="billAmount">Сумма счёта:</label>
-            <div class="input-group">
-                <span class="currency-symbol">₽</span>
-                <input type="number"
-                       th:field="*{billAmount}"
-                       id="billAmount"
-                       placeholder="0.00"
-                       step="0.01"
-                       min="0"
-                       required>
-            </div>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label for="tipPercentage">Процент чаевых:</label>
-                <select th:field="*{tipPercentage}" id="tipPercentage" required>
-                    <option value="">Выберите процент</option>
-                    <option th:value="5" th:text="'5%'">5%</option>
-                    <option th:value="10" th:text="'10%'">10%</option>
-                    <option th:value="15" th:text="'15%'">15%</option>
-                    <option th:value="18" th:text="'18%'">18%</option>
-                    <option th:value="20" th:text="'20%'">20%</option>
-                    <option th:value="25" th:text="'25%'">25%</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="numberOfPeople">Количество людей:</label>
-                <input type="number"
-                       th:field="*{numberOfPeople}"
-                       id="numberOfPeople"
-                       value="1"
-                       min="1"
-                       max="50">
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Тип заведения (автовыбор %):</label>
-            <div class="service-buttons">
-                <button type="button" class="service-btn" onclick="setTipByService('restaurant', 15)">Ресторан</button>
-                <button type="button" class="service-btn" onclick="setTipByService('cafe', 10)">Кафе</button>
-                <button type="button" class="service-btn" onclick="setTipByService('bar', 18)">Бар</button>
-                <button type="button" class="service-btn" onclick="setTipByService('delivery', 10)">Доставка</button>
-                <button type="button" class="service-btn" onclick="setTipByService('taxi', 15)">Такси</button>
-                <button type="button" class="service-btn" onclick="setTipByService('hotel', 20)">Отель</button>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="checkbox-group">
-                <input type="checkbox" th:field="*{roundUp}" id="roundUp">
-                <label for="roundUp">Округлить вверх до удобной суммы</label>
-            </div>
-        </div>
-
-        <button type="submit" class="calculate-btn">
-            Рассчитать чаевые
+    <!-- Навигация -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('bill')">
+            📋 Счет
         </button>
-    </form>
-
-    <!-- Результаты расчета -->
-    <div th:if="${result}" class="result">
-        <div class="result-section">
-            <h3>Общий расчет</h3>
-            <div class="result-row">
-                <span>Сумма счёта:</span>
-                <span th:text="'₽' + ${#numbers.formatDecimal(result.billAmount, 1, 2)}">₽0.00</span>
-            </div>
-            <div class="result-row">
-                <span th:text="'Чаевые (' + ${result.tipPercentage} + '%):'">Чаевые (0%):</span>
-                <span th:text="'₽' + ${#numbers.formatDecimal(result.tipAmount, 1, 2)}">₽0.00</span>
-            </div>
-            <div class="result-row total">
-                <span>Итого к оплате:</span>
-                <span th:text="'₽' + ${#numbers.formatDecimal(result.totalAmount, 1, 2)}">₽0.00</span>
-            </div>
-        </div>
-
-        <div th:if="${result.numberOfPeople > 1}" class="per-person">
-            <h3>На одного человека:</h3>
-            <div class="result-row">
-                <span>К доплате:</span>
-                <span th:text="'₽' + ${#numbers.formatDecimal(result.amountPerPerson, 1, 2)}">₽0.00</span>
-            </div>
-            <div class="result-row">
-                <span>Чаевые:</span>
-                <span th:text="'₽' + ${#numbers.formatDecimal(result.tipPerPerson, 1, 2)}">₽0.00</span>
-            </div>
-            <div class="result-row" th:if="${result.numberOfPeople > 1}">
-                <span>Людей:</span>
-                <span th:text="${result.numberOfPeople}">1</span>
-            </div>
-        </div>
-
-        <div th:if="${result.wasRoundedUp}" style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
-            💡 Сумма была округлена вверх для удобства
-        </div>
-
-        <button type="button" class="history-btn" onclick="saveToHistory()">
-            📊 Сохранить в историю
+        <button class="nav-tab" onclick="showSection('history')">
+            📊 История
         </button>
     </div>
 
-    <div th:if="${error != null}" class="error" th:text="${error}">
-        Ошибка
+    <!-- Раздел: Счет -->
+    <div id="bill-section" class="section active">
+        <form id="billForm">
+            <div class="form-group">
+                <label for="billAmount">Сумма счёта:</label>
+                <div class="input-group">
+                    <span class="currency-symbol">₽</span>
+                    <input type="number" id="billAmount" placeholder="0.00" step="0.01" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipPercentage">Процент чаевых: <span id="tipValue">15</span>%</label>
+                    <input type="range" id="tipPercentage" min="5" max="100" value="15" step="5"
+                           class="tip-slider" oninput="updateTipValue(this.value)">
+                </div>
+
+                <div class="form-group">
+                    <label for="numberOfPeople">Количество людей:</label>
+                    <input type="number" id="numberOfPeople" value="1" min="1" max="50">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Тип заведения (автовыбор %):</label>
+                <div class="service-buttons">
+                    <button type="button" class="service-btn" onclick="setTipByService('restaurant', 15)">Ресторан</button>
+                    <button type="button" class="service-btn" onclick="setTipByService('cafe', 10)">Кафе</button>
+                    <button type="button" class="service-btn" onclick="setTipByService('bar', 18)">Бар</button>
+                    <button type="button" class="service-btn" onclick="setTipByService('delivery', 10)">Доставка</button>
+                    <button type="button" class="service-btn" onclick="setTipByService('taxi', 15)">Такси</button>
+                    <button type="button" class="service-btn" onclick="setTipByService('hotel', 20)">Отель</button>
+                </div>
+            </div>
+
+
+
+            <button type="submit" class="calculate-btn">
+                Рассчитать чаевые
+            </button>
+        </form>
+
+        <!-- Результаты расчета -->
+        <div id="billResult" style="display: none;"></div>
+    </div>
+
+
+
+    <!-- Раздел: История -->
+    <div id="history-section" class="section">
+        <div class="form-group">
+            <button type="button" class="action-btn" onclick="clearHistory()">
+                🗑️ Очистить всю историю
+            </button>
+        </div>
+
+        <div id="historyList" class="history-list">
+            <div class="empty-history">
+                История расчётов пуста
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     let currentActiveBtn = null;
+    let splitMode = 'equal';
+    let personCounter = 1;
 
+    // Показать нужную секцию
+    function showSection(sectionName) {
+        // Скрыть все секции
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Убрать активный класс у всех табов
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Показать нужную секцию
+        document.getElementById(sectionName + '-section').classList.add('active');
+
+        // Активировать нужный таб
+        event.target.classList.add('active');
+
+        // Обновить историю при переходе на неё
+        if (sectionName === 'history') {
+            displayHistory();
+        }
+    }
+
+    // Установка процента по типу заведения
     function setTipByService(service, percentage) {
-        // Убираем активный класс у всех кнопок
         document.querySelectorAll('.service-btn').forEach(btn => {
             btn.classList.remove('active');
         });
 
-        // Добавляем активный класс текущей кнопке
         event.target.classList.add('active');
-        currentActiveBtn = event.target;
-
-        // Устанавливаем процент
         document.getElementById('tipPercentage').value = percentage;
+        updateTipValue(percentage);
     }
 
-    function saveToHistory() {
+    // Обработка формы счета
+    document.getElementById('billForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        calculateBill();
+    });
+
+    function calculateBill() {
+        const billAmount = parseFloat(document.getElementById('billAmount').value);
+        const tipPercentage = parseInt(document.getElementById('tipPercentage').value);
+        const numberOfPeople = parseInt(document.getElementById('numberOfPeople').value);
+
+
+        if (!billAmount || !tipPercentage) {
+            alert('Пожалуйста, заполните все обязательные поля');
+            return;
+        }
+
+        let tipAmount = (billAmount * tipPercentage) / 100;
+        let totalAmount = billAmount + tipAmount;
+        let amountPerPerson = totalAmount / numberOfPeople;
+        let tipPerPerson = tipAmount / numberOfPeople;
+
         const result = {
-            date: new Date().toLocaleString('ru-RU'),
-            billAmount: parseFloat(document.querySelector('[th\\:text*="billAmount"]')?.textContent?.replace('₽', '') || 0),
-            tipAmount: parseFloat(document.querySelector('[th\\:text*="tipAmount"]')?.textContent?.replace('₽', '') || 0),
-            totalAmount: parseFloat(document.querySelector('[th\\:text*="totalAmount"]')?.textContent?.replace('₽', '') || 0)
+            billAmount,
+            tipPercentage,
+            tipAmount,
+            totalAmount,
+            numberOfPeople,
+            amountPerPerson,
+            tipPerPerson,
+            date: new Date().toLocaleString('ru-RU')
         };
 
+        displayBillResult(result);
+        saveToHistory(result);
+    }
+
+    function displayBillResult(result) {
+        const resultDiv = document.getElementById('billResult');
+
+        resultDiv.innerHTML = `
+            <div class="result">
+                <div class="result-section">
+                    <h3>Общий расчет</h3>
+                    <div class="result-row">
+                        <span>Сумма счёта:</span>
+                        <span>₽${result.billAmount.toFixed(2)}</span>
+                    </div>
+                    <div class="result-row">
+                        <span>Чаевые (${result.tipPercentage}%):</span>
+                        <span>₽${result.tipAmount.toFixed(2)}</span>
+                    </div>
+                    <div class="result-row total">
+                        <span>Итого к оплате:</span>
+                        <span>₽${result.totalAmount.toFixed(2)}</span>
+                    </div>
+                </div>
+
+                ${result.numberOfPeople > 1 ? `
+                    <div class="result-section">
+                        <h3>На одного человека:</h3>
+                        <div class="result-row">
+                            <span>К доплате:</span>
+                            <span>₽${result.amountPerPerson.toFixed(2)}</span>
+                        </div>
+                        <div class="result-row">
+                            <span>Чаевые:</span>
+                            <span>₽${result.tipPerPerson.toFixed(2)}</span>
+                        </div>
+                        <div class="result-row">
+                            <span>Людей:</span>
+                            <span>${result.numberOfPeople}</span>
+                        </div>
+                    </div>
+                ` : ''}
+
+
+            </div>
+        `;
+
+        resultDiv.style.display = 'block';
+    }
+
+    // Установка режима разделения
+    function setSplitMode(mode) {
+        splitMode = mode;
+
+        document.querySelectorAll('.split-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        if (mode === 'equal') {
+            document.getElementById('equalSplitContainer').style.display = 'block';
+            document.getElementById('customSplitContainer').style.display = 'none';
+        } else {
+            document.getElementById('equalSplitContainer').style.display = 'none';
+            document.getElementById('customSplitContainer').style.display = 'block';
+        }
+    }
+
+    // Добавить участника
+    function addPerson() {
+        personCounter++;
+        const peopleList = document.getElementById('peopleList');
+        const personDiv = document.createElement('div');
+        personDiv.className = 'person-input';
+        personDiv.innerHTML = `
+            <button type="button" class="remove-person-btn" onclick="removePerson(this)">×</button>
+            <input type="text" placeholder="Имя участника" class="person-name">
+            <div class="input-group">
+                <span class="currency-symbol">₽</span>
+                <input type="number" placeholder="0.00" step="0.01" class="person-amount">
+            </div>
+        `;
+        peopleList.appendChild(personDiv);
+    }
+
+    // Удалить участника
+    function removePerson(button) {
+        button.parentElement.remove();
+    }
+
+    // Расчет разделения
+    function calculateSplit() {
+        const totalAmount = parseFloat(document.getElementById('splitBillAmount').value);
+        if (!totalAmount) {
+            alert('Введите общую сумму счёта');
+            return;
+        }
+
+        let splitResult = '';
+
+        if (splitMode === 'equal') {
+            const people = parseInt(document.getElementById('splitPeople').value);
+            const amountPerPerson = totalAmount / people;
+
+            splitResult = `
+                <div class="result">
+                    <div class="result-section">
+                        <h3>Равное разделение</h3>
+                        <div class="result-row">
+                            <span>Общая сумма:</span>
+                            <span>₽${totalAmount.toFixed(2)}</span>
+                        </div>
+                        <div class="result-row">
+                            <span>Количество людей:</span>
+                            <span>${people}</span>
+                        </div>
+                        <div class="result-row total">
+                            <span>С каждого:</span>
+                            <span>₽${amountPerPerson.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            const people = document.querySelectorAll('.person-input');
+            let customSplitHtml = '<div class="result"><div class="result-section"><h3>Разделение по суммам</h3>';
+            let totalCustom = 0;
+
+            people.forEach((person, index) => {
+                const name = person.querySelector('.person-name').value || `Участник ${index + 1}`;
+                const amount = parseFloat(person.querySelector('.person-amount').value) || 0;
+                totalCustom += amount;
+
+                customSplitHtml += `
+                    <div class="result-row">
+                        <span>${name}:</span>
+                        <span>₽${amount.toFixed(2)}</span>
+                    </div>
+                `;
+            });
+
+            customSplitHtml += `
+                <div class="result-row total">
+                    <span>Итого:</span>
+                    <span>₽${totalCustom.toFixed(2)}</span>
+                </div>
+            `;
+
+            if (Math.abs(totalCustom - totalAmount) > 0.01) {
+                customSplitHtml += `
+                    <div style="margin-top: 15px; color: #ff6b6b; font-size: 0.9em;">
+                        ⚠️ Разница: ₽${(totalAmount - totalCustom).toFixed(2)}
+                    </div>
+                `;
+            }
+
+            customSplitHtml += '</div></div>';
+            splitResult = customSplitHtml;
+        }
+
+        document.getElementById('splitResult').innerHTML = splitResult;
+        document.getElementById('splitResult').style.display = 'block';
+    }
+
+    // История
+    function saveToHistory(result) {
         let history = JSON.parse(localStorage.getItem('tipHistory') || '[]');
         history.unshift(result);
 
-        // Оставляем только последние 10 записей
-        if (history.length > 10) {
-            history = history.slice(0, 10);
+        if (history.length > 20) {
+            history = history.slice(0, 20);
         }
 
         localStorage.setItem('tipHistory', JSON.stringify(history));
+    }
 
-        alert('💾 Расчет сохранен в историю!');
+    function displayHistory() {
+        const history = JSON.parse(localStorage.getItem('tipHistory') || '[]');
+        const historyList = document.getElementById('historyList');
+
+        if (history.length === 0) {
+            historyList.innerHTML = '<div class="empty-history">История расчётов пуста</div>';
+            return;
+        }
+
+        let historyHtml = '';
+        history.forEach((item, index) => {
+            historyHtml += `
+                <div class="history-item">
+                    <div class="history-date">${item.date}</div>
+                    <div class="history-details">
+                        <div class="history-amounts">
+                            <span>Счёт: ₽${item.billAmount.toFixed(2)}</span>
+                            <span>Чаевые: ₽${item.tipAmount.toFixed(2)}</span>
+                            <span>Людей: ${item.numberOfPeople}</span>
+                        </div>
+                        <div class="history-total">₽${item.totalAmount.toFixed(2)}</div>
+                        <button class="delete-btn" onclick="deleteHistoryItem(${index})">×</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        historyList.innerHTML = historyHtml;
+    }
+
+    function deleteHistoryItem(index) {
+        let history = JSON.parse(localStorage.getItem('tipHistory') || '[]');
+        history.splice(index, 1);
+        localStorage.setItem('tipHistory', JSON.stringify(history));
+        displayHistory();
+    }
+
+    function clearHistory() {
+        if (confirm('Вы уверены, что хотите очистить всю историю?')) {
+            localStorage.removeItem('tipHistory');
+            displayHistory();
+        }
     }
 
     // Автоматическое обновление при изменении количества людей
@@ -418,6 +942,324 @@
         if (this.value < 1) this.value = 1;
         if (this.value > 50) this.value = 50;
     });
+
+    document.getElementById('splitPeople').addEventListener('input', function() {
+        if (this.value < 2) this.value = 2;
+        if (this.value > 20) this.value = 20;
+    });
+
+    // Валидация для сумм счетов
+    document.getElementById('billAmount').addEventListener('input', function() {
+        if (this.value < 0) this.value = 0;
+    });
+
+    document.getElementById('splitBillAmount').addEventListener('input', function() {
+        if (this.value < 0) this.value = 0;
+    });
+
+
+    // Горячие клавиши
+    document.addEventListener('keydown', function(e) {
+        // Alt + 1, 2, 3 для переключения между разделами
+        if (e.altKey) {
+            switch(e.key) {
+                case '1':
+                    e.preventDefault();
+                    showSectionByName('bill');
+                    break;
+                case '2':
+                    e.preventDefault();
+                    showSectionByName('split');
+                    break;
+                case '3':
+                    e.preventDefault();
+                    showSectionByName('history');
+                    break;
+            }
+        }
+
+        // Enter для расчетов
+        if (e.key === 'Enter' && !e.shiftKey) {
+            const activeSection = document.querySelector('.section.active');
+            if (activeSection.id === 'bill-section') {
+                e.preventDefault();
+                calculateBill();
+            } else if (activeSection.id === 'split-section') {
+                e.preventDefault();
+                calculateSplit();
+            }
+        }
+    });
+
+    function showSectionByName(sectionName) {
+        // Скрыть все секции
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Убрать активный класс у всех табов
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Показать нужную секцию
+        document.getElementById(sectionName + '-section').classList.add('active');
+
+        // Активировать нужный таб
+        const tabIndex = sectionName === 'bill' ? 0 : sectionName === 'split' ? 1 : 2;
+        document.querySelectorAll('.nav-tab')[tabIndex].classList.add('active');
+
+        // Обновить историю при переходе на неё
+        if (sectionName === 'history') {
+            displayHistory();
+        }
+    }
+
+    // Функции экспорта/импорта истории
+    function exportHistory() {
+        const history = JSON.parse(localStorage.getItem('tipHistory') || '[]');
+        if (history.length === 0) {
+            alert('История пуста, нечего экспортировать');
+            return;
+        }
+
+        const dataStr = JSON.stringify(history, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `tip_history_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Функция для копирования результата в буфер обмена
+    function copyResult() {
+        const resultDiv = document.querySelector('#billResult .result, #splitResult .result');
+        if (!resultDiv) {
+            alert('Нет результата для копирования');
+            return;
+        }
+
+        const text = resultDiv.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            // Показать уведомление о копировании
+            showNotification('Результат скопирован в буфер обмена!');
+        }).catch(() => {
+            alert('Не удалось скопировать результат');
+        });
+    }
+
+    // Показать уведомление
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            font-weight: 500;
+            animation: slideInRight 0.3s ease;
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Добавить CSS для анимации уведомлений
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Функция для печати результата
+    function printResult() {
+        const resultDiv = document.querySelector('#billResult .result, #splitResult .result');
+        if (!resultDiv) {
+            alert('Нет результата для печати');
+            return;
+        }
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>Результат расчета чаевых</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        padding: 20px;
+                        line-height: 1.6;
+                    }
+                    .result {
+                        border: 1px solid #ddd;
+                        padding: 20px;
+                        border-radius: 10px;
+                    }
+                    .result-section {
+                        margin-bottom: 20px;
+                        padding-bottom: 15px;
+                        border-bottom: 1px solid #eee;
+                    }
+                    .result-row {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 5px;
+                    }
+                    .total {
+                        font-weight: bold;
+                        font-size: 1.2em;
+                        border-top: 2px solid #333;
+                        padding-top: 10px;
+                        margin-top: 10px;
+                    }
+                    h3 {
+                        margin-bottom: 10px;
+                        color: #333;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Калькулятор чаевых Pro</h1>
+                <div class="result">${resultDiv.innerHTML}</div>
+                <p><small>Создано: ${new Date().toLocaleString('ru-RU')}</small></p>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Загрузить историю при старте
+        displayHistory();
+
+        // Установить фокус на первое поле
+        document.getElementById('billAmount').focus();
+
+        // Показать подсказки о горячих клавишах
+        setTimeout(() => {
+            showNotification('💡 Используйте Alt+1,2,3 для переключения разделов');
+        }, 2000);
+    });
+
+    // Функция валидации форм
+    function validateInputs() {
+        const billAmount = document.getElementById('billAmount').value;
+        const tipPercentage = document.getElementById('tipPercentage').value;
+
+        if (!billAmount || billAmount <= 0) {
+            alert('Введите корректную сумму счёта');
+            document.getElementById('billAmount').focus();
+            return false;
+        }
+
+        if (!tipPercentage) {
+            alert('Выберите процент чаевых');
+            document.getElementById('tipPercentage').focus();
+            return false;
+        }
+
+        return true;
+    }
+
+    // Обновленная функция calculateBill с валидацией
+    const originalCalculateBill = calculateBill;
+    calculateBill = function() {
+        if (!validateInputs()) return;
+        originalCalculateBill();
+    };
+
+    function updateTipValue(value) {
+        document.getElementById('tipValue').textContent = value;
+    }
+
+    function setTipValue(value) {
+        document.getElementById('tipPercentage').value = value;
+        updateTipValue(value);
+    }
+
+    function shareResult() {
+        const resultDiv = document.querySelector('#billResult .result, #splitResult .result');
+        if (!resultDiv) {
+            alert('Нет результата для обмена');
+            return;
+        }
+
+        const text = resultDiv.innerText;
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Результат расчета чаевых',
+                text: text
+            }).catch(() => {
+                copyResult();
+                showNotification('Результат скопирован для обмена!');
+            });
+        } else {
+            copyResult();
+            showNotification('Результат скопирован для обмена!');
+        }
+    }
+
+    // Функция для сброса формы
+    function resetForm() {
+        document.getElementById('billForm').reset();
+        document.getElementById('billResult').style.display = 'none';
+        document.querySelectorAll('.service-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById('billAmount').focus();
+    }
+
+    // Добавить кнопки действий к результатам
+    function addActionButtons(resultDiv) {
+        const actionsHtml = `
+        <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="copyResult()" style="flex: 1; min-width: 120px; padding: 10px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                📋 Копировать
+            </button>
+            <button onclick="shareResult()" style="flex: 1; min-width: 120px; padding: 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                📤 Поделиться
+            </button>
+            <button onclick="resetForm()" style="flex: 1; min-width: 120px; padding: 10px; background: #fd7e14; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                🔄 Сброс
+            </button>
+            <button onclick="printResult()" style="flex: 1; min-width: 120px; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                🖨️ Печать
+            </button>
+        </div>
+    `;
+        resultDiv.insertAdjacentHTML('beforeend', actionsHtml);
+    }
+
+    // Обновить displayBillResult для добавления кнопок действий
+    const originalDisplayBillResult = displayBillResult;
+    displayBillResult = function(result) {
+        originalDisplayBillResult(result);
+        const resultDiv = document.getElementById('billResult');
+        addActionButtons(resultDiv);
+    };
 </script>
 </body>
 </html>
