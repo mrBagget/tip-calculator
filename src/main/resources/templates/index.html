@@ -948,8 +948,9 @@
         const tipPercentage = parseInt(document.getElementById('tipPercentage').value);
         const numberOfPeople = parseInt(document.getElementById('numberOfPeople').value);
 
-
-        if (!billAmount || !tipPercentage) {
+        // Исправленная проверка - убираем проверку !tipPercentage,
+        // так как 0 считается false в JavaScript
+        if (!billAmount || tipPercentage === '' || tipPercentage === null || tipPercentage === undefined) {
             alert('Пожалуйста, заполните все обязательные поля');
             return;
         }
@@ -1085,8 +1086,34 @@
 
         setTimeout(() => {
             showNotification('Счет оплачен успешно! ✅');
-            generateWaiters();
-            showPaymentPage('waiter-selection');
+
+            // Проверяем, есть ли чаевые
+            if (window.currentBill.tipAmount > 0) {
+                // Есть чаевые - показываем выбор официанта
+                generateWaiters();
+                showPaymentPage('waiter-selection');
+            } else {
+                // Нет чаевых - сразу завершаем и возвращаемся к калькулятору
+                showNotification('Оплата завершена! Чаевых не было.', 'success', 3000);
+
+                // Сохраняем в историю без чаевых
+                const fullResult = {
+                    ...window.currentBill,
+                    waiter: 'Не выбран',
+                    paidTip: 0,
+                    paymentMethod: selectedPaymentMethod,
+                    date: new Date().toLocaleString('ru-RU'),
+                    status: 'completed'
+                };
+
+                saveToHistory(fullResult);
+
+                // Возвращаемся к калькулятору
+                setTimeout(() => {
+                    backToCalculator();
+                    resetForm();
+                }, 1500);
+            }
         }, 2000);
     }
 
@@ -1490,21 +1517,31 @@
     }
 
     // Показать уведомление
-    function showNotification(message) {
+    function showNotification(message, type = 'success', duration = 3000) {
         const notification = document.createElement('div');
+
+        // Определяем цвет в зависимости от типа
+        let backgroundColor;
+        switch(type) {
+            case 'success': backgroundColor = '#28a745'; break;
+            case 'processing': backgroundColor = '#17a2b8'; break;
+            case 'error': backgroundColor = '#dc3545'; break;
+            default: backgroundColor = '#28a745';
+        }
+
         notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #28a745;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            font-weight: 500;
-            animation: slideInRight 0.3s ease;
-        `;
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${backgroundColor};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        z-index: 1000;
+        font-weight: 500;
+        animation: slideInRight 0.3s ease;
+    `;
         notification.textContent = message;
         document.body.appendChild(notification);
 
@@ -1513,7 +1550,7 @@
             setTimeout(() => {
                 document.body.removeChild(notification);
             }, 300);
-        }, 3000);
+        }, duration);
     }
 
     // Добавить CSS для анимации уведомлений
@@ -1613,6 +1650,8 @@
             return false;
         }
 
+        // Исправленная проверка для процента чаевых
+        // Теперь 0% является валидным значением
         if (tipPercentage === '' || tipPercentage === null || tipPercentage === undefined) {
             alert('Выберите процент чаевых');
             document.getElementById('tipPercentage').focus();
