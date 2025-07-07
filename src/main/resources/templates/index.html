@@ -788,7 +788,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="tipPercentage">Процент чаевых: <span id="tipValue">15</span>%</label>
-                    <input type="range" id="tipPercentage" min="5" max="100" value="15" step="5"
+                    <input type="range" id="tipPercentage" min="0" max="100" value="15" step="5"
                            class="tip-slider" oninput="updateTipValue(this.value)">
                 </div>
 
@@ -870,9 +870,8 @@
         <div id="tip-payment-summary"></div>
 
         <div class="form-group">
-
             <div class="input-group">
-                <span class="">₽</span>
+                <span class="tip-amount-display">Сумма чаевых будет отображена здесь</span>
             </div>
         </div>
 
@@ -972,7 +971,6 @@
         };
 
         displayBillResult(result);
-        saveToHistory(result);
     }
 
     function displayBillResult(result) {
@@ -1147,27 +1145,35 @@
                 <span>₽${bill.tipAmount.toFixed(2)}</span>
             </div>
         </div>
-        `;
-            window.finalTipAmount = bill.tipAmount;
+    `;
+
+        // Обновить отображение суммы чаевых
+        const tipAmountDisplay = document.querySelector('.tip-amount-display');
+        if (tipAmountDisplay) {
+            tipAmountDisplay.textContent = `Сумма чаевых ${bill.tipAmount.toFixed(2)} ₽`;
         }
-        
+
+        window.finalTipAmount = bill.tipAmount;
+    }
 
 
 
     function processTipPayment() {
         const tipAmount = window.finalTipAmount;
 
-        showNotification('Обработка чаевых...');
+        showNotification('Обработка чаевых...', 'processing', 1500);
 
         setTimeout(() => {
-            showNotification(`Чаевые ${tipAmount.toFixed(2)}₽ переданы ${selectedWaiter.name}! 🎉`);
+            showNotification(`Чаевые ${tipAmount.toFixed(2)}₽ переданы ${selectedWaiter.name}! 🎉`, 'success', 4000);
 
             // Сохранить в историю полную информацию
             const fullResult = {
                 ...window.currentBill,
                 waiter: selectedWaiter.name,
                 paidTip: tipAmount,
-                paymentMethod: selectedPaymentMethod
+                paymentMethod: selectedPaymentMethod,
+                date: new Date().toLocaleString('ru-RU'),
+                status: 'completed'
             };
 
             saveToHistory(fullResult);
@@ -1177,7 +1183,7 @@
                 backToCalculator();
                 resetForm();
             }, 2000);
-        }, 2000);
+        }, 1500);
     }
 
     // Функции навигации назад
@@ -1607,7 +1613,7 @@
             return false;
         }
 
-        if (!tipPercentage) {
+        if (tipPercentage === '' || tipPercentage === null || tipPercentage === undefined) {
             alert('Выберите процент чаевых');
             document.getElementById('tipPercentage').focus();
             return false;
